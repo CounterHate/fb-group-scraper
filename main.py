@@ -59,13 +59,19 @@ def process_group(group):
     options = {"comments": True}
     credentials = ("", "")
     for p in get_posts(group=group.group_id, pages=2, options=options):
-        post = process_post(p, group)
+        time.sleep(2)
+        try:
+            post = process_post(p, group)
+        except Exception as e:
+            print(e)
+            print(p)
         comments = []
         for c in p["comments_full"]:
             comment = process_comment(c, post_id=p["post_id"], group=group)
             comments.append(comment.to_dict())
         posts.append(post.to_dict())
-        dump_comments(comments=comments, post_id=p["post_id"])
+        if len(comments) > 0:
+            dump_comments(comments=comments, post_id=p["post_id"])
     dump_group_posts(posts=posts, group=group)
 
 
@@ -90,8 +96,14 @@ def get_groups():
 
 def main():
     groups = get_groups()
-    for group in groups:
-        process_group(group)
+    iter = 0
+    while True:
+        print(f'Iter: {iter}')
+        for group in groups:
+            time.sleep(15)
+            process_group(group)
+        iter += 1
+        time.sleep(300)
 
 
 if __name__ == "__main__":
