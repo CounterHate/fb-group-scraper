@@ -1,0 +1,30 @@
+{
+    "mappings": {
+        "properties": {
+            "author_id": {
+                "type": "long"
+            },
+            "comment_id": {
+                "type": "long"
+            },
+            "content": {
+                "type": "text"
+            },
+            "date": {
+                "type": "date"
+            },
+            "group_id": {
+                "type": "long"
+            },
+            "group_name": {
+                "type": "text"
+            },
+            "original_post_id": {
+                "type": "long"
+            },
+            "replies": {
+                "type": "text"
+            }
+        }
+    }
+}
