@@ -20,7 +20,7 @@
                 "type": "boolean"
             },
             "group_id": {
-                "type": "long"
+                "type": "text"
             },
             "group_name": {
                 "type": "text"

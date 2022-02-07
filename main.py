@@ -4,9 +4,9 @@ import fbcomment
 import fbgroup
 import json
 import time
-import csv
 import requests
 from datetime import datetime
+import openpyxl
 
 ES_URL = "http://localhost:9200"
 POST_INDEX = "fb_posts"
@@ -60,7 +60,7 @@ def process_comment(c, post_id, group):
         comment_id=int(c["comment_id"]),
         content=c["comment_text"],
         date=to_epoch(str(c["comment_time"])),
-        group_id=int(group.group_id),
+        group_id=group.group_id,
         group_name=group.group_name,
         author_id=int(c["commenter_id"]),
         author_profile_url=c["commenter_url"],
@@ -71,7 +71,6 @@ def process_comment(c, post_id, group):
 
 
 def process_group(group):
-    time.sleep(5)
     print(f"Processing {group.group_name}")
     options = {"comments": True}
     credentials = ("", "")
@@ -88,29 +87,30 @@ def process_group(group):
 
 
 def get_groups():
+    wb = openpyxl.load_workbook("Lista grup do przeglądu.xlsx")
     groups = []
-    with open("groups.csv", "r") as file:
-        inputreader = csv.reader(file)
-        for index, row in enumerate(inputreader):
-            if index == 0:
+    for ws in wb.worksheets:
+        for row in range(1, ws.max_row + 1):
+            if row == 1:
                 continue
-            groups.append(
-                fbgroup.Group(
-                    group_id=row[0],
-                    group_name=row[1],
-                    private=row[2],
-                    email=row[3],
-                    password=row[4],
-                )
+            # get group id from group url
+            group_id = ws[row][2].value.split("/")[-2]
+            group = fbgroup.Group(
+                group_id=group_id,
+                group_name=ws[row][1].value,
+                email="",
+                password="",
+                private=False,
             )
+            groups.append(group)
     return groups
 
 
 def main():
     groups = get_groups()
-    iter = 0
     for group in groups:
         process_group(group)
+        time.sleep(300)
 
 
 if __name__ == "__main__":
