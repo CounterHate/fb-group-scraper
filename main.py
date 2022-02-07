@@ -75,6 +75,7 @@ def process_group(group):
     options = {"comments": True}
     credentials = ("", "")
     for p in get_posts(group=group.group_id, pages=2, options=options):
+        time.sleep(2)
         try:
             post = process_post(p, group)
         except Exception as e:
@@ -110,7 +111,7 @@ def main():
     groups = get_groups()
     for group in groups:
         process_group(group)
-        time.sleep(300)
+        time.sleep(360)
 
 
 if __name__ == "__main__":
