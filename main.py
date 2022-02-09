@@ -12,7 +12,8 @@ ES_URL = "http://localhost:9200"
 POST_INDEX = "fb_posts"
 COMMENTS_INDEX = "fb_comments"
 HEADERS = {"content-type": "application/json"}
-
+# INPUT_FILE = "Lista grup do przeglądu.xlsx"
+INPUT_FILE = "test_input.xlsx"
 
 def to_epoch(date):
     utc_time = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
@@ -88,7 +89,7 @@ def process_group(group):
 
 
 def get_groups():
-    wb = openpyxl.load_workbook("Lista grup do przeglądu.xlsx")
+    wb = openpyxl.load_workbook(INPUT_FILE)
     groups = []
     for ws in wb.worksheets:
         for row in range(1, ws.max_row + 1):
@@ -111,7 +112,7 @@ def main():
     groups = get_groups()
     for group in groups:
         process_group(group)
-        time.sleep(540)
+        time.sleep(3600)
 
 
 if __name__ == "__main__":
