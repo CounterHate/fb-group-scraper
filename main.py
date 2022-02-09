@@ -111,7 +111,7 @@ def main():
     groups = get_groups()
     for group in groups:
         process_group(group)
-        time.sleep(360)
+        time.sleep(540)
 
 
 if __name__ == "__main__":
