@@ -7,6 +7,7 @@ import time
 import requests
 from datetime import datetime
 import openpyxl
+import random
 
 ES_URL = "http://localhost:9200"
 POST_INDEX = "fb_posts"
@@ -76,7 +77,7 @@ def process_group(group):
     options = {"comments": True}
     credentials = ("", "")
     for p in get_posts(group=group.group_id, pages=2, options=options):
-        time.sleep(2)
+        time.sleep(random.randint(2,6))
         try:
             post = process_post(p, group)
         except Exception as e:
@@ -112,7 +113,7 @@ def main():
     groups = get_groups()
     for group in groups:
         process_group(group)
-        time.sleep(3600)
+        time.sleep(5400 + random.randint(1,10) * 60 - random.randint(1,10) * 60)
 
 
 if __name__ == "__main__":
