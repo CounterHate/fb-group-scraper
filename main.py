@@ -113,7 +113,7 @@ def main():
     groups = get_groups()
     for group in groups:
         process_group(group)
-        time.sleep(5400 + random.randint(1,10) * 60 - random.randint(1,10) * 60)
+        time.sleep(7200 + random.randint(1,10) * 60 - random.randint(1,10) * 60)
 
 
 if __name__ == "__main__":
