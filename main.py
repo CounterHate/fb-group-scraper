@@ -16,6 +16,7 @@ HEADERS = {"content-type": "application/json"}
 # INPUT_FILE = "Lista grup do przeglądu.xlsx"
 INPUT_FILE = "test_input.xlsx"
 
+
 def to_epoch(date):
     utc_time = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
     return (utc_time - datetime(1970, 1, 1)).total_seconds()
@@ -77,7 +78,7 @@ def process_group(group):
     options = {"comments": True}
     credentials = ("", "")
     for p in get_posts(group=group.group_id, pages=2, options=options):
-        time.sleep(random.randint(2,6))
+        time.sleep(random.randint(2, 6))
         try:
             post = process_post(p, group)
         except Exception as e:
@@ -113,7 +114,6 @@ def main():
     groups = get_groups()
     for group in groups:
         process_group(group)
-        time.sleep(7200 + random.randint(1,10) * 60 - random.randint(1,10) * 60)
 
 
 if __name__ == "__main__":
