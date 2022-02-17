@@ -22,8 +22,8 @@ def create_index(index):
 
 def main():
     # delete old indexes
-    delete_index(POSTS_INDEX)
-    delete_index(COMMENTS_INDEX)
+    # delete_index(POSTS_INDEX)
+    # delete_index(COMMENTS_INDEX)
     # create posts index
     create_index(POSTS_INDEX)
     # create comments index
