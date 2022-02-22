@@ -8,13 +8,11 @@ import requests
 from datetime import datetime
 import openpyxl
 import random
+import es_conf as es
 
-ES_URL = "http://localhost:9200"
-POST_INDEX = "fb_posts"
-COMMENTS_INDEX = "fb_comments"
 HEADERS = {"content-type": "application/json"}
-# INPUT_FILE = "Lista grup do przeglądu.xlsx"
-INPUT_FILE = "test_input.xlsx"
+INPUT_FILE = "Lista grup do przeglądu.xlsx"
+# INPUT_FILE = "test_input.xlsx"
 
 
 def to_epoch(date):
@@ -23,16 +21,16 @@ def to_epoch(date):
 
 
 def add_to_index(index, data):
-    if index == POST_INDEX:
+    if index == es.es.POST_INDEX:
         r = requests.put(
-            f"{ES_URL}/{index}/_doc/{data['post_id']}",
+            f"{es.ES_URL}/{index}/_doc/{data['post_id']}",
             headers=HEADERS,
             data=json.dumps(data),
         )
         print(r.json())
     else:
         r = requests.put(
-            f"{ES_URL}/{index}/_doc/{data['comment_id']}",
+            f"{es.ES_URL}/{index}/_doc/{data['comment_id']}",
             headers=HEADERS,
             data=json.dumps(data),
         )
@@ -86,8 +84,8 @@ def process_group(group):
             print(p)
         for c in p["comments_full"]:
             comment = process_comment(c, post_id=p["post_id"], group=group)
-            add_to_index(index=COMMENTS_INDEX, data=comment.to_dict())
-        add_to_index(index=POST_INDEX, data=post.to_dict())
+            add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
+        add_to_index(index=es.POST_INDEX, data=post.to_dict())
 
 
 def get_groups():

@@ -3,3 +3,4 @@
 3) install packages -> pip3 install -r req.txt
 4) setup elasticsearch -> python3 setup_es.py
 5) run group scraper -> python3 main.py
+6) es_conf.py -> zawiera url do elasticsearch i nazwy indeksów
