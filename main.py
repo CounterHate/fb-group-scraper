@@ -11,8 +11,8 @@ import random
 import es_conf as es
 
 HEADERS = {"content-type": "application/json"}
-INPUT_FILE = "Lista grup do przeglądu.xlsx"
-# INPUT_FILE = "test_input.xlsx"
+# INPUT_FILE = "Lista grup do przeglądu.xlsx"
+INPUT_FILE = "test_input.xlsx"
 
 
 def to_epoch(date):
@@ -21,7 +21,7 @@ def to_epoch(date):
 
 
 def add_to_index(index, data):
-    if index == es.es.POST_INDEX:
+    if index == es.POST_INDEX:
         r = requests.put(
             f"{es.ES_URL}/{index}/_doc/{data['post_id']}",
             headers=HEADERS,
