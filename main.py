@@ -75,7 +75,7 @@ def process_group(group):
     print(f"Processing {group.group_name}")
     options = {"comments": True}
     credentials = ("", "")
-    for p in get_posts(group=group.group_id, pages=2, options=options):
+    for p in get_posts(group.group_id, pages=2, options=options):
         time.sleep(random.randint(2, 6))
         try:
             post = process_post(p, group)
@@ -93,18 +93,21 @@ def get_groups():
     groups = []
     for ws in wb.worksheets:
         for row in range(1, ws.max_row + 1):
-            if row == 1:
-                continue
-            # get group id from group url
-            group_id = ws[row][2].value.split("/")[-2]
-            group = fbgroup.Group(
-                group_id=group_id,
-                group_name=ws[row][1].value,
-                email="",
-                password="",
-                private=False,
-            )
-            groups.append(group)
+            try:
+                if row == 1:
+                    continue
+                # get group id from group url
+                group_id = ws[row][2].value.split("/")[-2]
+                group = fbgroup.Group(
+                    group_id=group_id,
+                    group_name=ws[row][1].value,
+                    email="",
+                    password="",
+                    private=False,
+                )
+                groups.append(group)
+            except Exception as e:
+                break
     return groups
 
 
