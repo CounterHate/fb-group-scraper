@@ -39,14 +39,14 @@ def add_to_index(index, data):
             headers=HEADERS,
             data=json.dumps(data),
         )
-        print(r.json())
+        # print(r.json())
     else:
         r = requests.put(
             f"{es.ES_URL}/{index}/_doc/{data['comment_id']}",
             headers=HEADERS,
             data=json.dumps(data),
         )
-        print(r.json())
+        # print(r.json())
 
 
 def process_post(p, group=None, page=None):
@@ -96,9 +96,10 @@ def process_comment(c, post_id, group=None, page=None):
 
 
 def process_page(page):
-    print(f"Processing {page.page_name}")
+    print(f"Processing {page.page_name}, page_id: {page.page_id}")
     options = {"comments": True}
-    for p in get_posts(page.page_id, pages=10, options=options):
+    for p in get_posts(page.page_id, pages=5, options=options):
+        print('.', end="")
         time.sleep(random.randint(2, 6))
         try:
             post = process_post(p=p, page=page)
@@ -112,11 +113,12 @@ def process_page(page):
 
 
 def process_group(group):
-    print(f"Processing {group.group_name}")
+    print(f"Processing {group.group_name}, group id: {group.group_id}")
     options = {"comments": True}
     if group.private:
         return
-    for p in get_posts(group=group.group_id, pages=2, options=options):
+    for p in get_posts(group=group.group_id, pages=5, options=options):
+        print('.', end="")
         time.sleep(random.randint(2, 6))
         try:
             post = process_post(p=p, group=group)
@@ -157,7 +159,7 @@ def get_jobs(iter):
                 jobs.append({"type": "group", "data": group})
             # read page data
             else:
-                page_id = ws[row][2].value.split("/")[-1]
+                page_id = ws[row][2].value.split("/")[-2]
                 page = fbpage.Page(page_id=page_id, page_name=ws[row][1].value)
                 jobs.append({"type": "page", "data": page})
 
@@ -176,6 +178,19 @@ def main():
             process_page(job["data"])
         else:
             print("Unknown type")
+    # page = fbpage.Page(page_id='stowarzyszeniestopnop', page_name='Ogólnopolskie Stowarzyszenie Wiedzy o Szczepieniach STOP NOP')
+    # options = {"comments": True}
+    # for p in get_posts(page.page_id, pages=10, options=options):
+    #     time.sleep(random.randint(2, 6))
+    #     try:
+    #         post = process_post(p=p, page=page)
+    #     except Exception as e:
+    #         print(e)
+    #         print(p)
+    #     for c in p["comments_full"]:
+    #         comment = process_comment(c, post_id=p["post_id"], page=page)
+    #         add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
+    #     add_to_index(index=es.POST_INDEX, data=post.to_dict())
 
 
 if __name__ == "__main__":
