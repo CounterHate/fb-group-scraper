@@ -16,7 +16,13 @@
             "group_id": {
                 "type": "text"
             },
+            "page_id": {
+                "type": "text"
+            },
             "group_name": {
+                "type": "text"
+            },
+            "page_name": {
                 "type": "text"
             },
             "original_post_id": {

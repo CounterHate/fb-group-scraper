@@ -1,0 +1,9 @@
+{
+    "mappings": {
+        "properties": {
+            "iter": {
+                "type": "long"
+            }
+        }
+    }
+}

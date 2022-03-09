@@ -8,11 +8,13 @@ class Post:
     post_id: int
     content: str
     date: str
-    group_name: str
-    group_id: int
     post_url: str
     author_id: int
     author_profile_url: str
+    group_id: str = None,
+    page_id: str = None
+    group_name: str = None
+    page_name: str = None
     urls: list = field(default_factory=list)
     fanpage: bool = False
     like_count: int = 0
