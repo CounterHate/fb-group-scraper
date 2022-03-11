@@ -96,7 +96,7 @@ def process_comment(c, post_id, group=None, page=None):
 
 
 def process_page(page):
-    print(f"Processing {page.page_name}, page_id: {page.page_id}")
+    print(f"\nProcessing {page.page_name}, page_id: {page.page_id}")
     options = {"comments": True}
     for p in get_posts(page.page_id, pages=5, options=options):
         print('.', end="")
@@ -107,13 +107,16 @@ def process_page(page):
             print(e)
             print(p)
         for c in p["comments_full"]:
-            comment = process_comment(c, post_id=p["post_id"], page=page)
-            add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
+            try:
+                comment = process_comment(c, post_id=p["post_id"], page=page)
+                add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
+            except TypeError:
+                print(f"Error processing comment: {c}")
         add_to_index(index=es.POST_INDEX, data=post.to_dict())
 
 
 def process_group(group):
-    print(f"Processing {group.group_name}, group id: {group.group_id}")
+    print(f"\nProcessing {group.group_name}, group id: {group.group_id}")
     options = {"comments": True}
     if group.private:
         return
