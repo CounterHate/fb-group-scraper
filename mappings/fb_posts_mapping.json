@@ -1,51 +1,54 @@
 {
     "mappings": {
-        "properties": {
-            "author_id": {
-                "type": "long"
-            },
-            "author_profile_url": {
-                "type": "text"
-            },
-            "comment_count": {
-                "type": "integer"
-            },
-            "content": {
-                "type": "text"
-            },
-            "posted_utime": {
-                "type": "date"
-            },
-            "fanpage": {
-                "type": "boolean"
-            },
-            "group_id": {
-                "type": "text"
-            },
-            "page_id": {
-                "type": "text"
-            },
-            "group_name": {
-                "type": "text"
-            },
-            "page_name": {
-                "type": "text"
-            },
-            "like_count": {
-                "type": "integer"
-            },
-            "post_id": {
-                "type": "long"
-            },
-            "post_url": {
-                "type": "text"
-            },
-            "share_count": {
-                "type": "integer"
-            },
-            "urls": {
-                "type": "text"
+        "fb_post": {
+            "properties": {
+                "author_id": {
+                    "type": "long"
+                },
+                "author_profile_url": {
+                    "type": "text"
+                },
+                "comment_count": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "text"
+                },
+                "posted_utime": {
+                    "type": "date"
+                },
+                "fanpage": {
+                    "type": "boolean"
+                },
+                "group_id": {
+                    "type": "text"
+                },
+                "page_id": {
+                    "type": "text"
+                },
+                "group_name": {
+                    "type": "text"
+                },
+                "page_name": {
+                    "type": "text"
+                },
+                "like_count": {
+                    "type": "integer"
+                },
+                "post_id": {
+                    "type": "long"
+                },
+                "post_url": {
+                    "type": "text"
+                },
+                "share_count": {
+                    "type": "integer"
+                },
+                "urls": {
+                    "type": "text"
+                }
             }
         }
+
     }
 }

@@ -1,36 +1,39 @@
 {
     "mappings": {
-        "properties": {
-            "author_id": {
-                "type": "long"
-            },
-            "comment_id": {
-                "type": "long"
-            },
-            "content": {
-                "type": "text"
-            },
-            "date": {
-                "type": "date"
-            },
-            "group_id": {
-                "type": "text"
-            },
-            "page_id": {
-                "type": "text"
-            },
-            "group_name": {
-                "type": "text"
-            },
-            "page_name": {
-                "type": "text"
-            },
-            "original_post_id": {
-                "type": "long"
-            },
-            "replies": {
-                "type": "text"
+        "fb_comment": {
+            "properties": {
+                "author_id": {
+                    "type": "long"
+                },
+                "comment_id": {
+                    "type": "long"
+                },
+                "content": {
+                    "type": "text"
+                },
+                "date": {
+                    "type": "date"
+                },
+                "group_id": {
+                    "type": "text"
+                },
+                "page_id": {
+                    "type": "text"
+                },
+                "group_name": {
+                    "type": "text"
+                },
+                "page_name": {
+                    "type": "text"
+                },
+                "original_post_id": {
+                    "type": "long"
+                },
+                "replies": {
+                    "type": "text"
+                }
             }
         }
+
     }
 }

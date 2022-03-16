@@ -1,6 +1,5 @@
 1) create virtualenv -> virtualenv venv
 2) activate virtualenv -> sourve venv/bin/activate
 3) install packages -> pip3 install -r req.txt
-4) setup elasticsearch -> python3 setup_es.py or python3 setup_es.py fresh for fresh setup
-5) run group scraper -> python3 main.py
-6) es_conf.py -> zawiera url do elasticsearch i nazwy indeksów
+4) run group scraper -> python3 main.py
+5) es_conf.py -> zawiera url do elasticsearch i nazwy indeksów

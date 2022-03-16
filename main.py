@@ -17,12 +17,13 @@ INPUT_FILE = "input/scraper_input.xlsx"
 
 
 def get_iter_count():
-    r = requests.get(f"{es.ES_URL}/{es.ITER_INDEX}/_doc/1")
+    auth=requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
+    r = requests.get(f"{es.ES_URL}/{es.ITER_INDEX}/_doc/1", auth=auth)
     iter = r.json()["_source"]["iter_count"]
     new_iter = iter + 1 if iter < es.MAX_ITER else 1
     data = {"iter_count": new_iter}
     r = requests.put(
-        f"{es.ES_URL}/{es.ITER_INDEX}/_doc/1", data=json.dumps(data), headers=HEADERS
+        f"{es.ES_URL}/{es.ITER_INDEX}/_doc/1", data=json.dumps(data), headers=HEADERS, auth=auth
     )
     return iter
 
@@ -34,17 +35,21 @@ def to_epoch(date):
 
 def add_to_index(index, data):
     if index == es.POST_INDEX:
+        auth=requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
         r = requests.put(
             f"{es.ES_URL}/{index}/_doc/{data['post_id']}",
             headers=HEADERS,
             data=json.dumps(data),
+            auth=auth
         )
         # print(r.json())
     else:
+        auth=requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
         r = requests.put(
             f"{es.ES_URL}/{index}/_doc/{data['comment_id']}",
             headers=HEADERS,
             data=json.dumps(data),
+            auth=auth
         )
         # print(r.json())
 
@@ -107,6 +112,7 @@ def process_page(page):
             print(e)
             print(p)
         for c in p["comments_full"]:
+            print('.', end="")
             try:
                 comment = process_comment(c, post_id=p["post_id"], page=page)
                 add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
