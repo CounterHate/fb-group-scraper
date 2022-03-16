@@ -104,7 +104,7 @@ def process_page(page):
     print(f"\nProcessing {page.page_name}, page_id: {page.page_id}")
     options = {"comments": True}
     for p in get_posts(page.page_id, pages=5, options=options):
-        print('.', end="")
+        print(".", end="")
         time.sleep(random.randint(2, 6))
         try:
             post = process_post(p=p, page=page)
@@ -127,7 +127,7 @@ def process_group(group):
     if group.private:
         return
     for p in get_posts(group=group.group_id, pages=5, options=options):
-        print('.', end="")
+        print(".", end="")
         time.sleep(random.randint(2, 6))
         try:
             post = process_post(p=p, group=group)
@@ -177,9 +177,22 @@ def get_jobs(iter):
     return jobs
 
 
+def print_jobs(jobs):
+    for job in jobs:
+        if job["type"] == "page":
+            name = job["data"].page_name
+            print(f"Page: {name}")
+        elif job["type"] == "group":
+            name = job["data"].group_name
+            print(f"Group: {name}")
+        else:
+            print("Unknown job")
+
+
 def main():
     iter = get_iter_count()
     jobs = get_jobs(iter)
+    random.shuffle(jobs)
     for job in jobs:
         if job["type"] == "group":
             process_group(job["data"])
@@ -187,19 +200,6 @@ def main():
             process_page(job["data"])
         else:
             print("Unknown type")
-    # page = fbpage.Page(page_id='stowarzyszeniestopnop', page_name='Ogólnopolskie Stowarzyszenie Wiedzy o Szczepieniach STOP NOP')
-    # options = {"comments": True}
-    # for p in get_posts(page.page_id, pages=10, options=options):
-    #     time.sleep(random.randint(2, 6))
-    #     try:
-    #         post = process_post(p=p, page=page)
-    #     except Exception as e:
-    #         print(e)
-    #         print(p)
-    #     for c in p["comments_full"]:
-    #         comment = process_comment(c, post_id=p["post_id"], page=page)
-    #         add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
-    #     add_to_index(index=es.POST_INDEX, data=post.to_dict())
 
 
 if __name__ == "__main__":
