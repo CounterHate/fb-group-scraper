@@ -1,3 +1,4 @@
+from posixpath import split
 from facebook_scraper import get_posts
 import fbpost
 import fbcomment
@@ -17,13 +18,16 @@ INPUT_FILE = "input/scraper_input.xlsx"
 
 
 def get_iter_count():
-    auth=requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
+    auth = requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
     r = requests.get(f"{es.ES_URL}/{es.ITER_INDEX}/_doc/1", auth=auth)
     iter = r.json()["_source"]["iter_count"]
     new_iter = iter + 1 if iter < es.MAX_ITER else 1
     data = {"iter_count": new_iter}
     r = requests.put(
-        f"{es.ES_URL}/{es.ITER_INDEX}/_doc/1", data=json.dumps(data), headers=HEADERS, auth=auth
+        f"{es.ES_URL}/{es.ITER_INDEX}/_doc/1",
+        data=json.dumps(data),
+        headers=HEADERS,
+        auth=auth,
     )
     return iter
 
@@ -35,21 +39,21 @@ def to_epoch(date):
 
 def add_to_index(index, data):
     if index == es.POST_INDEX:
-        auth=requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
+        auth = requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
         r = requests.put(
             f"{es.ES_URL}/{index}/_doc/{data['post_id']}",
             headers=HEADERS,
             data=json.dumps(data),
-            auth=auth
+            auth=auth,
         )
         # print(r.json())
     else:
-        auth=requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
+        auth = requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
         r = requests.put(
             f"{es.ES_URL}/{index}/_doc/{data['comment_id']}",
             headers=HEADERS,
             data=json.dumps(data),
-            auth=auth
+            auth=auth,
         )
         # print(r.json())
 
@@ -112,13 +116,15 @@ def process_page(page):
             print(e)
             print(p)
         for c in p["comments_full"]:
-            print('.', end="")
+            print(".", end="")
             try:
                 comment = process_comment(c, post_id=p["post_id"], page=page)
-                add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
+                if check_if_content_contains_selected_phrases(comment.content):
+                    add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
             except TypeError:
                 print(f"Error processing comment: {c}")
-        add_to_index(index=es.POST_INDEX, data=post.to_dict())
+        if check_if_content_contains_selected_phrases(post.content):
+            add_to_index(index=es.POST_INDEX, data=post.to_dict())  
 
 
 def process_group(group):
@@ -136,8 +142,10 @@ def process_group(group):
             print(p)
         for c in p["comments_full"]:
             comment = process_comment(c, post_id=p["post_id"], group=group)
-            add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
-        add_to_index(index=es.POST_INDEX, data=post.to_dict())
+            if check_if_content_contains_selected_phrases(comment.content):
+                add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
+        if check_if_content_contains_selected_phrases(post.content):
+            add_to_index(index=es.POST_INDEX, data=post.to_dict())
 
 
 def get_jobs(iter):
@@ -187,6 +195,23 @@ def print_jobs(jobs):
             print(f"Group: {name}")
         else:
             print("Unknown job")
+
+
+def get_phrases():
+    phrases = []
+    with open("phrases.txt", "r") as f:
+        for line in f.readlines():
+            phrases.append(line.replace("\n", "").lower())
+    return phrases
+
+
+def check_if_content_contains_selected_phrases(content):
+    try:
+        phrases = get_phrases()
+        content_split = content.lower().split(" ")
+        return any(word in phrases for word in content_split)
+    except AttributeError:
+        return False
 
 
 def main():
