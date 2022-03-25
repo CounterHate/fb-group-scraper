@@ -84,32 +84,38 @@ def process_post(p, group=None, page=None):
 
 
 def process_comment(c, post_id, group=None, page=None):
-    comment = fbcomment.Comment(
-        original_post_id=post_id,
-        comment_id=int(c["comment_id"]),
-        content=c["comment_text"],
-        date=to_epoch(str(c["comment_time"])),
-        author_id=int(c["commenter_id"]),
-        author_profile_url=c["commenter_url"],
-        replies=str(c["replies"]),
-        reaction_count=c["comment_reaction_count"],
-    )
-    if group:
-        comment.group_id = group.group_id
-        comment.group_name = group.group_name
+    try:
+        comment = fbcomment.Comment(
+            original_post_id=post_id,
+            comment_id=int(c["comment_id"]),
+            content=c["comment_text"],
+            date=to_epoch(str(c["comment_time"])),
+            author_id=int(c["commenter_id"]),
+            author_profile_url=c["commenter_url"],
+            replies=str(c["replies"]),
+            reaction_count=c["comment_reaction_count"],
+        )
+        if group:
+            comment.group_id = group.group_id
+            comment.group_name = group.group_name
 
-    if page:
-        comment.page_id = page.page_id
-        comment.page_name = page.page_name
-    return comment
+        if page:
+            comment.page_id = page.page_id
+            comment.page_name = page.page_name
+        return comment
+    except ValueError:
+        print(c)
 
 
 def process_page(page):
     print(f"\nProcessing {page.page_name}, page_id: {page.page_id}")
     options = {"comments": True}
-    for p in get_posts(page.page_id, pages=5, options=options):
+    
+    page_count = random.randint(2,6)
+
+    for p in get_posts(page.page_id, pages=page_count, options=options):
         print(".", end="")
-        time.sleep(random.randint(2, 6))
+        time.sleep(random.randint(5, 10))
         try:
             post = process_post(p=p, page=page)
         except Exception as e:
@@ -132,9 +138,11 @@ def process_group(group):
     options = {"comments": True}
     if group.private:
         return
-    for p in get_posts(group=group.group_id, pages=5, options=options):
+    
+    page_count = random.randint(2,6)
+    for p in get_posts(group=group.group_id, pages=page_count, options=options):
         print(".", end="")
-        time.sleep(random.randint(2, 6))
+        time.sleep(random.randint(5, 10))
         try:
             post = process_post(p=p, group=group)
         except Exception as e:
@@ -209,8 +217,10 @@ def check_if_content_contains_selected_phrases(content):
     try:
         phrases = get_phrases()
         content_split = content.lower().split(" ")
+        # return True
         return any(word in phrases for word in content_split)
     except AttributeError:
+        # return True
         return False
 
 
@@ -219,6 +229,7 @@ def main():
     jobs = get_jobs(iter)
     random.shuffle(jobs)
     for job in jobs:
+        time.sleep(random.randint(5,10) * 30)
         if job["type"] == "group":
             process_group(job["data"])
         elif job["type"] == "page":

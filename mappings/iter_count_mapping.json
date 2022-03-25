@@ -1,9 +1,12 @@
 {
     "mappings": {
-        "properties": {
-            "iter": {
-                "type": "long"
+        "_doc": {
+            "properties": {
+                "iter": {
+                    "type": "long"
+                }
             }
         }
+
     }
 }
