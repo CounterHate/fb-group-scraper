@@ -110,11 +110,12 @@ def process_comment(c, post_id, group=None, page=None):
 def process_page(page):
     print(f"\nProcessing {page.page_name}, page_id: {page.page_id}")
     options = {"comments": True}
-    
-    page_count = random.randint(2,6)
+
+    page_count = random.randint(2, 6)
 
     for p in get_posts(page.page_id, pages=page_count, options=options):
-        print(".", end="")
+        post_id = p["post_id"]
+        print(f"processing post: {post_id}")
         time.sleep(random.randint(5, 10))
         try:
             post = process_post(p=p, page=page)
@@ -122,7 +123,8 @@ def process_page(page):
             print(e)
             print(p)
         for c in p["comments_full"]:
-            print(".", end="")
+            comment_id = c["comment_id"]
+            print(f"processing comment: {comment_id}")
             try:
                 comment = process_comment(c, post_id=p["post_id"], page=page)
                 if check_if_content_contains_selected_phrases(comment.content):
@@ -130,7 +132,7 @@ def process_page(page):
             except TypeError:
                 print(f"Error processing comment: {c}")
         if check_if_content_contains_selected_phrases(post.content):
-            add_to_index(index=es.POST_INDEX, data=post.to_dict())  
+            add_to_index(index=es.POST_INDEX, data=post.to_dict())
 
 
 def process_group(group):
@@ -138,10 +140,11 @@ def process_group(group):
     options = {"comments": True}
     if group.private:
         return
-    
-    page_count = random.randint(2,6)
+
+    page_count = random.randint(2, 6)
     for p in get_posts(group=group.group_id, pages=page_count, options=options):
-        print(".", end="")
+        post_id = p["post_id"]
+        print(f"processing post: {post_id}")
         time.sleep(random.randint(5, 10))
         try:
             post = process_post(p=p, group=group)
@@ -149,6 +152,8 @@ def process_group(group):
             print(e)
             print(p)
         for c in p["comments_full"]:
+            comment_id = c["comment_id"]
+            print(f"processing comment: {comment_id}")
             comment = process_comment(c, post_id=p["post_id"], group=group)
             if check_if_content_contains_selected_phrases(comment.content):
                 add_to_index(index=es.COMMENTS_INDEX, data=comment.to_dict())
@@ -228,8 +233,10 @@ def main():
     iter = get_iter_count()
     jobs = get_jobs(iter)
     random.shuffle(jobs)
-    for job in jobs:
-        time.sleep(random.randint(5,10) * 30)
+    for index, job in enumerate(jobs):
+        if index != 0:
+            time.sleep(random.randint(5, 10) * 30)
+        # print(index)
         if job["type"] == "group":
             process_group(job["data"])
         elif job["type"] == "page":
