@@ -39,23 +39,27 @@ def to_epoch(date):
 
 def add_to_index(index, data):
     if index == es.POST_INDEX:
+        post_id = data['post_id']
+        print(f"Adding post {post_id} to index")
         auth = requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
         r = requests.put(
-            f"{es.ES_URL}/{index}/_doc/{data['post_id']}",
+            f"{es.ES_URL}/{index}/_doc/{post_id}",
             headers=HEADERS,
             data=json.dumps(data),
             auth=auth,
         )
-        # print(r.json())
+        print(r.json())
     else:
+        comment_id = data['comment_id']
+        print(f"Adding comment {comment_id} to index")
         auth = requests.auth.HTTPBasicAuth(es.USER, es.PASSWORD)
         r = requests.put(
-            f"{es.ES_URL}/{index}/_doc/{data['comment_id']}",
+            f"{es.ES_URL}/{index}/_doc/{comment_id}",
             headers=HEADERS,
             data=json.dumps(data),
             auth=auth,
         )
-        # print(r.json())
+        print(r.json())
 
 
 def process_post(p, group=None, page=None):
@@ -189,7 +193,7 @@ def get_jobs(iter):
                 jobs.append({"type": "group", "data": group})
             # read page data
             else:
-                page_id = ws[row][2].value.split("/")[-2]
+                page_id = ws[row][2].value.split("/")[-1]
                 page = fbpage.Page(page_id=page_id, page_name=ws[row][1].value)
                 jobs.append({"type": "page", "data": page})
 
